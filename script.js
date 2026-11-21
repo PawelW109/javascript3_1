@@ -98,7 +98,61 @@
     })
 
   data.sort((a, b) => a.localeCompare(b));
-  cw3o.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+  cw3o.innerHTML = ``;
+
+  })
+
+
+
+  const cw4 = document.getElementById('cw4')
+  const cw4o = document.getElementById('cw4o')
+  const cw4i = document.getElementById('cw4i')
+  const cw4info = document.getElementById('cw4info')
+  let cw4Data = [];
+  function cw4Info(i){
+    const d = cw4Data[i];
+    cw4info.innerHTML = `Waluta: ${d.currency}, Nazwa oficjalna: ${d.official}, Flaga: <br> <img src='${d.flag}'>`;
+  }
+
+  cw4.addEventListener("click", async function() {
+    const response = await fetch(
+      `https://api.restcountries.com/countries/v5?capitals=${cw4i.value}`,
+      { headers: { 'Authorization': REST_COUNTRIES_AUTHORISATION } }
+    )
+
+
+    cw4o.innerHTML = "";
+
+    const result = await response.json();
+
+    cw4Data = [];
+
+    let n = 0;
+    result.data.objects.forEach(country => {
+      const name = country.names.common;
+      const capital = country.capitals[0].name;
+      const population = country.population;
+      const region = country.region;
+      const languages = country.languages;
+
+      console.log(country)
+
+      let languageText = "";
+
+      for (let l = 0; l < languages.length; l++) {
+        if(l > 0)
+          languageText += ", ";
+        languageText += languages[l].name;
+      }
+
+      cw4Data.push({currency: country.currencies[0].name, flag: country.flag.url_png, official: country.names.official});
+      cw4o.innerHTML += `<div id=cw4_${n++}>Country: ${name}, Capital: ${capital}, Population: ${population}, Region: ${region}, Languages: ${languageText}</div>`
+
+    })
+
+    for (let i = 0; i < n; i++) {
+      document.getElementById(`cw4_${i}`).addEventListener('click', () => cw4Info(i));
+    }
 
   })
 
